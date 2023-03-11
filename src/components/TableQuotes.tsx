@@ -1,7 +1,14 @@
 import React from 'react';
 import { FlatList, StyleSheet, View, Text } from 'react-native';
 
-const TableItem = ({ tickerName, last, highestBid, percentChange }) => {
+interface TableItemProps {
+  tickerName: string;
+  last: string;
+  highestBid: string;
+  percentChange: string;
+}
+
+const TableItem = ({ tickerName, last, highestBid, percentChange }: TableItemProps) => {
   return (
     <View style={styles.row}>
       <Text style={styles.cell}>{tickerName}</Text>
@@ -23,7 +30,16 @@ const TableHeader = () => {
   );
 };
 
-const TableQuotes = ({ data }) => {
+interface TableProps {
+  data: {
+    tickerName: string;
+    last: string;
+    highestBid: string;
+    percentChange: string;
+  }[];
+}
+
+const TableQuotes = ({ data }: TableProps) => {
   return (
     <View style={styles.container}>
       <TableHeader />
