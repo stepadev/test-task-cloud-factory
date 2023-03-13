@@ -1,5 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, View, Text } from 'react-native';
+import { IData }  from '../screens/QuotesScreen';
+import Error from '../components/Error';
 
 interface TableItemProps {
   tickerName: string;
@@ -30,19 +32,18 @@ const TableHeader = () => {
   );
 };
 
-interface TableProps {
-  data: {
-    tickerName: string;
-    last: string;
-    highestBid: string;
-    percentChange: string;
-  }[];
+interface ITableProps {
+  data: IData[];
+  error: boolean;
+  ListHeaderComponent?: React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
 }
 
-const TableQuotes = ({ data }: TableProps) => {
+
+const TableQuotes: React.FC<ITableProps> = ({ data, error }) => {
   return (
     <View style={styles.container}>
       <TableHeader />
+      {error && <View><Error error={error} /></View>}
       <FlatList
         data={data}
         renderItem={({item}) => (
@@ -54,8 +55,9 @@ const TableQuotes = ({ data }: TableProps) => {
           />
         )}
         keyExtractor={(item) => item.tickerName}
-        // Render 10 items at a time
-        initialNumToRender={10}
+        ListHeaderComponent={<View />}
+        // Render 20 items at a time
+        initialNumToRender={20}
         // Render 10 items ahead of the current window
         windowSize={10}
         showsVerticalScrollIndicator={false}

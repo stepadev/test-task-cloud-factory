@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TableQuotes from '../components/TableQuotes';
 import { useIsFocused } from '@react-navigation/native';
+import Error from '../components/Error';
 
-interface IData {
+export interface IData {
   tickerName: string;
   last: string;
   highestBid: string;
@@ -15,6 +16,7 @@ export const QuotesScreen = () => {
   
   const isFocused = useIsFocused(); 
   const [tableData, setTableData] = useState<IData[]>([]);
+  const [error, setError] = useState<boolean>(false);
 
   const fetchData = async () => {
     try {
@@ -25,8 +27,10 @@ export const QuotesScreen = () => {
         ...data[key],
       }));
       setTableData(preData);
+      setError(false);
     } catch (error) {
       console.error(error);
+      setError(true);
     }
   };
   
@@ -42,10 +46,20 @@ export const QuotesScreen = () => {
       return () => clearInterval(intervalId);
     }
 
-    return () => setTableData([]);
+    return () => {
+      setTableData([]);
+      setError(false);
+    }
 
   }, [isFocused]);
-  
-  return <TableQuotes data={tableData} />;
 
+  return (
+    <TableQuotes 
+      data={tableData} 
+      error={error} 
+      ListHeaderComponent={<Error error={error} />} 
+    />
+  );
 };
+
+
