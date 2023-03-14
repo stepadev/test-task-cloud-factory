@@ -27,10 +27,13 @@ export const QuotesScreen = () => {
         ...data[key],
       }));
       setTableData(preData);
-      setError(false);
+      if (data.error) {
+        setError(true);
+      } else {
+        setError(false);
+      }
     } catch (error) {
       console.error(error);
-      setError(true);
     }
   };
   

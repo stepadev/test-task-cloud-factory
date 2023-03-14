@@ -38,30 +38,33 @@ interface ITableProps {
   ListHeaderComponent?: React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
 }
 
-
 const TableQuotes: React.FC<ITableProps> = ({ data, error }) => {
   return (
     <View style={styles.container}>
       <TableHeader />
-      {error && <View><Error error={error} /></View>}
-      <FlatList
-        data={data}
-        renderItem={({item}) => (
-          <TableItem
-            tickerName={item.tickerName}
-            last={item.last}
-            highestBid={item.highestBid}
-            percentChange={item.percentChange}
-          />
-        )}
-        keyExtractor={(item) => item.tickerName}
-        ListHeaderComponent={<View />}
-        // Render 20 items at a time
-        initialNumToRender={20}
-        // Render 10 items ahead of the current window
-        windowSize={10}
-        showsVerticalScrollIndicator={false}
-      />
+      {error ? (
+        <Error error={error} />
+      ) : (
+            <FlatList
+              data={data}
+              renderItem={({item}) => (
+                <TableItem
+                  tickerName={item.tickerName}
+                  last={item.last}
+                  highestBid={item.highestBid}
+                  percentChange={item.percentChange}
+                />
+              )}
+              keyExtractor={(item) => item.tickerName}
+              ListHeaderComponent={<View />}
+              // Render 20 items at a time
+              initialNumToRender={20}
+              // Render 10 items ahead of the current window
+              windowSize={10}
+              showsVerticalScrollIndicator={false}
+            />
+          )
+        }
     </View>
   );
 };
