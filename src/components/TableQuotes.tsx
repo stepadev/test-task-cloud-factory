@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View, Text } from 'react-native';
 import { IData }  from '../screens/QuotesScreen';
 import Error from '../components/Error';
+import * as Animatable from 'react-native-animatable';
 
 interface TableItemProps {
   tickerName: string;
@@ -11,13 +12,38 @@ interface TableItemProps {
 }
 
 const TableItem = ({ tickerName, last, highestBid, percentChange }: TableItemProps) => {
+
+  const [currentLast, setCurrentLast] = useState(last);
+  const [currentHighestBid, setCurrentHighestBid] = useState(highestBid);
+  const [currentPercentChange, setCurrentPercentChange] = useState(percentChange);
+
+  useEffect(() => {
+    if (last !== currentLast) {
+      setCurrentLast(last);
+    }
+    if (highestBid !== currentHighestBid) {
+      setCurrentHighestBid(highestBid);
+    }
+    if (percentChange !== currentPercentChange) {
+      setCurrentPercentChange(percentChange);
+    }
+  }, [last, highestBid, percentChange]);
+
   return (
-    <View style={styles.row}>
-      <Text style={styles.cell}>{tickerName}</Text>
-      <Text style={styles.cell}>{last}</Text>
-      <Text style={styles.cell}>{highestBid}</Text>
-      <Text style={styles.cell}>{percentChange}</Text>
-    </View>
+    <Animatable.View animation="fadeIn" duration={3000} style={styles.row}>
+      <Animatable.Text animation={last === currentLast ? undefined : 'flash'} style={styles.cell}>
+        {tickerName}
+      </Animatable.Text>
+      <Animatable.Text animation={last === currentLast ? undefined : 'flash'} style={styles.cell}>
+        {last}
+      </Animatable.Text>
+      <Animatable.Text animation={highestBid === currentHighestBid ? undefined : 'flash'} style={styles.cell}>
+        {highestBid}
+      </Animatable.Text>
+      <Animatable.Text animation={percentChange === currentPercentChange ? undefined : 'flash'} style={styles.cell}>
+        {percentChange}
+      </Animatable.Text>
+    </Animatable.View>
   );
 };
 
@@ -39,6 +65,7 @@ interface ITableProps {
 }
 
 const TableQuotes: React.FC<ITableProps> = ({ data, error }) => {
+
   return (
     <View style={styles.container}>
       <TableHeader />
@@ -47,13 +74,16 @@ const TableQuotes: React.FC<ITableProps> = ({ data, error }) => {
       ) : (
             <FlatList
               data={data}
-              renderItem={({item}) => (
-                <TableItem
-                  tickerName={item.tickerName}
-                  last={item.last}
-                  highestBid={item.highestBid}
-                  percentChange={item.percentChange}
-                />
+              renderItem={({ item, index }) => (
+                <Animatable.View animation="fadeIn" duration={1 + index * 10}>
+                  <TableItem
+                    key={`${item.last}-${index}`}
+                    tickerName={item.tickerName}
+                    last={item.last}
+                    highestBid={item.highestBid}
+                    percentChange={item.percentChange}
+                  />
+                </Animatable.View>
               )}
               keyExtractor={(item) => item.tickerName}
               ListHeaderComponent={<View />}
