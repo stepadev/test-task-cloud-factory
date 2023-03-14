@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
 import TableQuotes from '../components/TableQuotes';
 import { useIsFocused } from '@react-navigation/native';
 import Error from '../components/Error';
@@ -17,6 +18,7 @@ export const QuotesScreen = () => {
   const isFocused = useIsFocused(); 
   const [tableData, setTableData] = useState<IData[]>([]);
   const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
     try {
@@ -27,6 +29,7 @@ export const QuotesScreen = () => {
         ...data[key],
       }));
       setTableData(preData);
+      setLoading(false);
       if (data.error) {
         setError(true);
       } else {
@@ -34,6 +37,7 @@ export const QuotesScreen = () => {
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
   
@@ -57,12 +61,14 @@ export const QuotesScreen = () => {
   }, [isFocused]);
 
   return (
-    <TableQuotes 
-      data={tableData} 
-      error={error} 
-      ListHeaderComponent={<Error error={error} />} 
-    />
+    loading ? (
+      <ActivityIndicator size="large" color="#0000ff" />
+    ) : (
+      <TableQuotes
+        data={tableData}
+        error={error}
+        ListHeaderComponent={<Error error={error} />}
+      />
+    )
   );
 };
-
-
